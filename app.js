@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
+const cors = require('cors')({ origin: true });
 
 const app = express();
 
@@ -13,12 +14,12 @@ const credentials = {
   to: {
     email: 'receiver@example.com'
   }
-}
+};
 
-app.use(bodyParser.urlencoded({ extended: false }))
-app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-app.post('/', (req, res) => {
+app.get('/', cors((req, res) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -27,22 +28,23 @@ app.post('/', (req, res) => {
     }
   });
 
-  transporter.sendMail(
-    {
-      from: credentials.from.email,
-      to: credentials.to.email,
-      subject: req.body.subject,
-      text: req.body.message,
-      html: `<p>${req.body.message}</p>`
-    },
-    (err, info) => {
-      if (err) {
-        return res.json(err);
-      } else {
-        return res.json('Success');
-      }
+  const name = req.query.name;
+  const subject = req.query.subject;
+  const message = req.query.message;
+
+  const mailOptions = {
+    from: credentials.from.email,
+    to: credentials.to.email,
+    subject: `${name} - ${subject}`,
+    html: `<p>${message}</p>`
+  };
+
+  return transporter.sendMail(mailOptions, (err, info) => {
+    if (err) {
+      return res.json(err);
     }
-  );
-});
+    return res.json('Success');
+  });
+}));
 
 app.listen(port, () => console.log(`Server listening on port ${port}!`));
