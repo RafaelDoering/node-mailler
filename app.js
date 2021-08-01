@@ -6,15 +6,6 @@ const cors = require('cors')({ origin: true });
 const app = express();
 
 const port = 3000;
-const credentials = {
-  from: {
-    email: 'sender@example.com',
-    password: 'mysuperstrongemailpassword'
-  },
-  to: {
-    email: 'receiver@example.com'
-  }
-};
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -23,8 +14,8 @@ app.get('/', cors((req, res) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: credentials.from.email,
-      pass: credentials.from.password
+      user: process.env.FROM_EMAIL,
+      pass: process.env.FROM_EMAIL_PASSWORD
     }
   });
 
@@ -33,8 +24,8 @@ app.get('/', cors((req, res) => {
   const message = req.query.message;
 
   const mailOptions = {
-    from: credentials.from.email,
-    to: credentials.to.email,
+    from: process.env.FROM_EMAIL,
+    to: req.query.email,
     subject: `${name} - ${subject}`,
     html: `<p>${message}</p>`
   };
