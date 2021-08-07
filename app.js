@@ -10,7 +10,7 @@ const port = 3000;
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.get('/', cors((req, res) => {
+app.post('/', cors((req, res) => {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
