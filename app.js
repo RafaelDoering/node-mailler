@@ -7,10 +7,12 @@ const app = express();
 
 const port = 3000;
 
+app.use(cors());
+
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
-app.post('/', cors((req, res) => {
+app.post('/', (req, res) => {
   const {name, subject, message, email} = req.body;
 
   const transporter = nodemailer.createTransport({
@@ -34,6 +36,6 @@ app.post('/', cors((req, res) => {
     }
     return res.json('Success');
   });
-}));
+});
 
 app.listen(port, () => console.log(`Server listening on port ${port}!`));
