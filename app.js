@@ -11,6 +11,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 app.post('/', cors((req, res) => {
+  const {name, subject, message, email} = req.body;
+
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -19,13 +21,9 @@ app.post('/', cors((req, res) => {
     }
   });
 
-  const name = req.query.name;
-  const subject = req.query.subject;
-  const message = req.query.message;
-
   const mailOptions = {
     from: process.env.FROM_EMAIL,
-    to: req.query.email,
+    to: email,
     subject: `${name} - ${subject}`,
     html: `<p>${message}</p>`
   };
